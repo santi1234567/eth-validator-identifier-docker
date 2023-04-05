@@ -1,0 +1,99 @@
+version: "3.7"
+
+services:
+  beaconchain-validator-scraper:
+    environment:
+      POSTGRES_ENDPOINT: ${POSTGRES_ENDPOINT}
+    image: beaconchain-validator-scraper:latest
+    build:
+      context: ./beaconchain-validator-scraper
+      dockerfile: Dockerfile
+    container_name: scraper-container
+    init: true
+    command: >-
+      --postgres
+      ${POSTGRES_ENDPOINT}
+
+    network_mode: "host"
+    #restart: unless-stopped
+  eth-pools-identifier:
+    environment:
+      POSTGRES_ENDPOINT: ${POSTGRES_ENDPOINT}
+    image: eth-pools-identifier:latest
+    build:
+      context: ./eth-pools-identifier
+      dockerfile: Dockerfile
+    container_name: eth-pools-identifier-container
+    init: true
+    command: >-
+      --postgres=${POSTGRES_ENDPOINT}
+      --read-from=database
+      --write-mode=database
+    #      --pool-history=true
+    network_mode: "host"
+    #restart: unless-stopped
+  coinbase-validator-identifier:
+    environment:
+      POSTGRES_ENDPOINT: ${POSTGRES_ENDPOINT}
+      C_KEY: ${C_KEY}
+      INFURA_PROJECT_ID: ${INFURA_PROJECT_ID}
+    image: coinbase-validator-identifier:latest
+    build:
+      context: ./coinbase-validator-identifier
+      dockerfile: Dockerfile
+    container_name: coinbase-container
+    init: true
+    command: >-
+
+    network_mode: "host"
+    #restart: unless-stopped
+  chaind-wrapper:
+    image: chaind-wrapper
+    container_name: chaind-wrapper-container
+    init: true
+    build:
+      context: ./chaind-wrapper
+      dockerfile: Dockerfile
+    environment:
+      - POSTGRES_ENDPOINT_CHAIND=${POSTGRES_ENDPOINT_CHAIND}
+      - ETH2_CLIENT_ADDRESS=${ETH2_CLIENT_ADDRESS}
+      - ETH1_CLIENT_ADDRESS=${ETH1_CLIENT_ADDRESS}
+    network_mode: "host"
+    command: >-
+      Caught
+      /app/chaind
+      --eth2client.address=${ETH2_CLIENT_ADDRESS}
+      --chaindb.url=${POSTGRES_ENDPOINT_CHAIND}
+      --eth1deposits.enable=true
+      --eth1client.address=${ETH1_CLIENT_ADDRESS}
+      --blocks.enable=false
+      --validators.enable=true
+      --beacon-committees.enable=false
+      --proposer-duties.enable=false
+      --finalizer.enable=false
+      --eth1deposits.start-block=11185311
+  chaind-only-tables:
+    image: chaind-only-tables
+    container_name: chaind-only-tables-container
+    init: true
+    build:
+      context: ./chaind-only-tables
+      dockerfile: Dockerfile
+    environment:
+      - POSTGRES_ENDPOINT_CHAIND=${POSTGRES_ENDPOINT_CHAIND}
+      - ETH2_CLIENT_ADDRESS=${ETH2_CLIENT_ADDRESS}
+      - ETH1_CLIENT_ADDRESS=${ETH1_CLIENT_ADDRESS}
+    network_mode: "host"
+    command: >-
+      All
+      /app/chaind
+      --eth2client.address=${ETH2_CLIENT_ADDRESS}
+      --chaindb.url=${POSTGRES_ENDPOINT_CHAIND}
+      --eth1deposits.enable=false
+      --eth1client.address=${ETH1_CLIENT_ADDRESS}
+      --blocks.enable=false
+      --validators.enable=false
+      --beacon-committees.enable=false
+      --proposer-duties.enable=false
+      --finalizer.enable=false
+      --eth1deposits.start-block=11185311
