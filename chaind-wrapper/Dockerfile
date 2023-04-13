@@ -1,7 +1,7 @@
 FROM wealdtech/chaind
 
-COPY std_listener.sh .
+COPY chaind-wrapper.sh .
 
-RUN chmod +x std_listener.sh
+RUN chmod +x chaind-wrapper.sh
 
-ENTRYPOINT [ "./std_listener.sh" ]
+ENTRYPOINT [ "./chaind-wrapper.sh" ]

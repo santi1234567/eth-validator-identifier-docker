@@ -1,7 +1,7 @@
 FROM wealdtech/chaind
 
-COPY std_listener.sh .
+COPY chaind-only-tables-wrapper.sh .
 
-RUN chmod +x std_listener.sh
+RUN chmod +x chaind-only-tables-wrapper.sh
 
-ENTRYPOINT [ "./std_listener.sh" ]
+ENTRYPOINT [ "./chaind-only-tables-wrapper.sh" ]
