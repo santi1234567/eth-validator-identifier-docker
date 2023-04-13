@@ -58,9 +58,10 @@ services:
       - POSTGRES_ENDPOINT_CHAIND=${POSTGRES_ENDPOINT_CHAIND}
       - ETH2_CLIENT_ADDRESS=${ETH2_CLIENT_ADDRESS}
       - ETH1_CLIENT_ADDRESS=${ETH1_CLIENT_ADDRESS}
+      - START_BLOCK=${START_BLOCK}
     network_mode: "host"
     command: >-
-      Caught
+      ${START_BLOCK}
       /app/chaind
       --eth2client.address=${ETH2_CLIENT_ADDRESS}
       --chaindb.url=${POSTGRES_ENDPOINT_CHAIND}
@@ -71,7 +72,6 @@ services:
       --beacon-committees.enable=false
       --proposer-duties.enable=false
       --finalizer.enable=false
-      --eth1deposits.start-block=11185311
   chaind-only-tables:
     image: chaind-only-tables
     container_name: chaind-only-tables-container
@@ -96,4 +96,3 @@ services:
       --beacon-committees.enable=false
       --proposer-duties.enable=false
       --finalizer.enable=false
-      --eth1deposits.start-block=11185311
