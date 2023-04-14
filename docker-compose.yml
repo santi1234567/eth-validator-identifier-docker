@@ -29,7 +29,7 @@ services:
       --postgres=${POSTGRES_ENDPOINT}
       --read-from=database
       --write-mode=database
-    #      --pool-history=true
+      --pool-history=true
     network_mode: "host"
     #restart: unless-stopped
   coinbase-validator-identifier:
@@ -44,7 +44,13 @@ services:
     container_name: coinbase-container
     init: true
     command: >-
-
+      --postgres
+      ${POSTGRES_ENDPOINT}
+      --infura-project-id
+      ${INFURA_PROJECT_ID}
+      --covalent-api-key
+      ${C_KEY}
+      --save-in-db
     network_mode: "host"
     #restart: unless-stopped
   chaind-wrapper:
