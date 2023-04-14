@@ -22,7 +22,9 @@ else
         sed -i "s/^START_BLOCK=.*/START_BLOCK=$latest_start_block/" .env
     fi
 fi
+mkdir logs
 
+touch logs/chaind-wrapper.log
 docker-compose up chaind-wrapper > >(tee logs/chaind-wrapper.log) 2>&1
 grep -i "error" -q logs/chaind-wrapper.log
 if [ $? -eq 0 ]; then
@@ -30,6 +32,7 @@ if [ $? -eq 0 ]; then
     exit 1
 fi
 
+touch logs/chaind.log
 docker-compose up beaconchain-validator-scraper > >(tee logs/beaconchain-validator-scraper.log) 2>&1
 grep -i "error" -q logs/beaconchain-validator-scraper.log
 if [ $? -eq 0 ]; then
@@ -37,6 +40,7 @@ if [ $? -eq 0 ]; then
     exit 1
 fi
 
+touch logs/coinbase-validator-identifier.log
 docker-compose up coinbase-validator-identifier > >(tee logs/coinbase-validator-identifier.log) 2>&1
 grep -i "error" -q logs/coinbase-validator-identifier.log
 if [ $? -eq 0 ]; then
@@ -44,6 +48,7 @@ if [ $? -eq 0 ]; then
     exit 1
 fi
 
+touch logs/eth-pools-identifier.log
 docker-compose up eth-pools-identifier > >(tee logs/eth-pools-identifier.log) 2>&1
 grep -i "error" -q logs/eth-pools-identifier.log
 if [ $? -eq 0 ]; then
